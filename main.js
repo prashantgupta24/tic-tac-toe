@@ -5,22 +5,35 @@ $(function () {
   ticTacToeGame.canvas = {
     canvasElement: document.getElementById('wordCanvas'),
     ctx: document.getElementById('wordCanvas').getContext('2d'),
-    initializeCanvas: function() {
-      //vertical lines
-      let p1 = new Point(ticTacToeGame.grid.x2, ticTacToeGame.grid.y1);
-      let p2 = new Point(ticTacToeGame.grid.x2, ticTacToeGame.grid.y4);
-      this.drawPoints(p1, p2);
+    initializeCanvas: function(numRows) {
+      let numRowsForGrid = numRows + 2;
+      let widthPerColumn = Math.floor(this.canvasElement.width/numRowsForGrid);
+      let heightPerRow = Math.floor(this.canvasElement.height/numRowsForGrid);
+      //console.log(heightPerRow);
 
-      this.draw(ticTacToeGame.grid.x3,ticTacToeGame.grid.y1,ticTacToeGame.grid.x3,ticTacToeGame.grid.y4);
+      for(let i=1;i<numRowsForGrid;i++) {
+        //console.log(i*widthPerColumn);
+        ticTacToeGame.grid['x'+(i)] = i*widthPerColumn;
+      }
+
+      for(let i=1;i<numRowsForGrid;i++) {
+        //console.log(i*heightPerRow);
+        ticTacToeGame.grid['y'+(i)] = i*heightPerRow;
+      }
 
       //horizontal lines
-      this.draw(ticTacToeGame.grid.x1,ticTacToeGame.grid.y2,ticTacToeGame.grid.x4,ticTacToeGame.grid.y2);
-      this.draw(ticTacToeGame.grid.x1,ticTacToeGame.grid.y3,ticTacToeGame.grid.x4,ticTacToeGame.grid.y3);
-    },
-    draw: function(x1, y1, x2, y2) {
-      this.ctx.moveTo(x1,y1);
-      this.ctx.lineTo(x2,y2);
-      this.ctx.stroke();
+      for(let i=2;i<=numRows;i++) {
+        let p1 = new Point(ticTacToeGame.grid.x1, ticTacToeGame.grid['y'+(i)]);
+        let p2 = new Point(ticTacToeGame.grid['x'+(numRows+1)], ticTacToeGame.grid['y'+(i)]);
+        this.drawPoints(p1, p2);
+      }
+
+      //vertical lines
+      for(let i=2;i<=numRows;i++) {
+        let p1 = new Point(ticTacToeGame.grid['x'+(i)], ticTacToeGame.grid.y1);
+        let p2 = new Point(ticTacToeGame.grid['x'+(i)], ticTacToeGame.grid['y'+(numRows+1)]);
+        this.drawPoints(p1, p2);
+      }
     },
     drawPoints: function(p1, p2) {
       this.ctx.moveTo(p1.x,p1.y);
@@ -47,7 +60,6 @@ $(function () {
   };
 
   ticTacToeGame.chancesElem = $('#chances');
-  //ticTacToeGame.turn = ticTacToeGame.turnEnum.CROSS;
   ticTacToeGame.initialize();
 
   $(document).keypress(function (event) {
@@ -74,6 +86,8 @@ Array.matrix = function (numRows, numCols, initial) {
 };
 
 let ticTacToe = {
+  size: 3, //main value, sets size of the game board (size * size)
+  grid: {},
   playing: false,
   turnEnum: {
     CROSS: 'CROSS',
@@ -87,24 +101,14 @@ let ticTacToe = {
     }
   },
   turn: '',
-  rows: new Array(3),
-  columns: new Array(3),
+  rows: new Array(this.size),
+  columns: new Array(this.size),
   d1: 0,
   d2: 0,
   numMoves: 0,
-  arrayElem: Array.matrix(3,3,0),
-  grid: {
-    x1:50,
-    x2:180,
-    x3:350,
-    x4:520,
-    y1:80,
-    y2:210,
-    y3:370,
-    y4:480
-  },
-  initialize: function (){
-    this.canvas.initializeCanvas();
+  initialize: function () {
+    this.canvas.initializeCanvas(this.size);
+    this.arrayElem = Array.matrix(this.size,this.size,0),
     this.playing = true;
     this.turn = this.turnEnum.CROSS;
     this.numMoves = 0;
@@ -112,8 +116,8 @@ let ticTacToe = {
     this.initializeArrays();
   },
   initializeArrays: function () {
-    for(let i=0;i<3;i++) {
-      for(let j=0;j<3;j++){
+    for(let i=0;i<this.size;i++) {
+      for(let j=0;j<this.size;j++){
         this.arrayElem[i][j]=0;
         this.rows[j] = 0;
         this.columns[j] = 0;
@@ -122,21 +126,21 @@ let ticTacToe = {
   },
   playMove: function (quad) {
 
-    let xVal = Math.floor((quad-1)/3);
-    let yVal = Math.floor((quad-1))%3;
+    let xVal = Math.floor((quad-1)/this.size);
+    let yVal = Math.floor((quad-1))%this.size;
 
     if(this.arrayElem[xVal][yVal] != 0) {
       alert('That spot is filled!');
     } else {
       this.numMoves += 1;
       this.arrayElem[xVal][yVal] = 1;
-      this.completeMove(quad, yVal, xVal);
+      this.completeMove(yVal, xVal);
       let gameWon = this.checkGame(xVal, yVal);
 
       if(gameWon) {
         setTimeout(function() {alert(ticTacToe.turn + ' won!');}, 100);
         this.playing = false;
-      } else if(this.numMoves === 9){
+      } else if(this.numMoves === this.size*this.size){
         setTimeout(function() {alert('Game draw!');}, 100);
       } else {
         this.turn = this.turn === this.turnEnum.CIRCLE? this.turnEnum.CROSS : this.turnEnum.CIRCLE;
@@ -151,7 +155,7 @@ let ticTacToe = {
     if(i === j) {
       this.d1+=val;
     }
-    if((i+j) === 2) {
+    if((i+j) === this.size-1) {
       this.d2+=val;
     }
     // console.log('R : '+this.rows);
@@ -159,12 +163,12 @@ let ticTacToe = {
     // console.log('d1 : ' + this.d1);
     // console.log('d2 : ' + this.d2);
 
-    if(Math.abs(this.rows[i]) === 3 || Math.abs(this.columns[j]) === 3
-  || Math.abs(this.d1) === 3 || Math.abs(this.d2) === 3) {
+    if(Math.abs(this.rows[i]) === this.size || Math.abs(this.columns[j]) === this.size
+  || Math.abs(this.d1) === this.size || Math.abs(this.d2) === this.size) {
       return true;
     }
   },
-  completeMove: function (quad, xVal, yVal) {
+  completeMove: function (xVal, yVal) {
 
     // let xVal = Math.floor((quad-1))%3;
     // let yVal = Math.floor((quad-1)/3);
