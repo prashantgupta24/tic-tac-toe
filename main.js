@@ -1,6 +1,7 @@
+
 $(function () {
   //console.log('ready');
-  let ticTacToeGame = ticTacToe;
+  //let ticTacToeGame = ticTacToe;
 
   ticTacToeGame.canvas = {
     canvasElement: document.getElementById('wordCanvas'),
@@ -71,6 +72,17 @@ $(function () {
       }
     }
   });
+
+  // ticTacToeGame.arrayElem[0][0]=1;
+  // ticTacToeGame.arrayElem[0][1]=-1;
+  // ticTacToeGame.arrayElem[1][0]=1;
+  // ticTacToeGame.arrayElem[1][1]=-1;
+  // ticTacToeGame.arrayElem[0][2]=1;
+  // ticTacToeGame.arrayElem[1][2]=-1;
+
+  let ticTacToeAI1 = ticTacToeAI(ticTacToeGame);
+  console.log(ticTacToeAI1.findBestMove(0,0));
+  //console.log(ticTacToeAI1.findBestMove());
 });
 
 Array.matrix = function (numRows, numCols, initial) {
@@ -85,7 +97,7 @@ Array.matrix = function (numRows, numCols, initial) {
   return arr;
 };
 
-let ticTacToe = {
+let ticTacToeGame = {
   size: 3, //main value, sets size of the game board (size * size)
   grid: {},
   playing: false,
@@ -138,7 +150,7 @@ let ticTacToe = {
       let gameWon = this.checkGame(xVal, yVal);
 
       if(gameWon) {
-        setTimeout(function() {alert(ticTacToe.turn + ' won!');}, 100);
+        setTimeout(function() {alert(ticTacToeGame.turn + ' won!');}, 100);
         this.playing = false;
       } else if(this.numMoves === this.size*this.size){
         setTimeout(function() {alert('Game draw!');}, 100);
@@ -167,6 +179,66 @@ let ticTacToe = {
   || Math.abs(this.d1) === this.size || Math.abs(this.d2) === this.size) {
       return true;
     }
+  },
+  checkGameLong: function() {
+
+    //rows
+    for(let i=0;i<this.size;i++) {
+      let val = 0;
+      for(let j=0;j<this.size;j++){
+        val+=this.arrayElem[i][j];
+        if(Math.abs(val) === 3) {
+          return val;
+        }
+      }
+    }
+
+    //columns
+    for(let i=0;i<this.size;i++) {
+      let val = 0;
+      for(let j=0;j<this.size;j++){
+        val+=this.arrayElem[j][i];
+        if(Math.abs(val) === 3) {
+          return val;
+        }
+      }
+    }
+
+    //d1
+    for(let i=0;i<this.size;i++) {
+      let val = 0;
+      for(let j=0;j<this.size;j++){
+        if(i === j){
+          val+=this.arrayElem[i][j];
+        }
+        if(Math.abs(val) === 3) {
+          return val;
+        }
+      }
+    }
+
+    //d2
+    for(let i=0;i<this.size;i++) {
+      let val = 0;
+      for(let j=0;j<this.size;j++){
+        if(i + j === 2){
+          val+=this.arrayElem[i][j];
+        }
+        if(Math.abs(val) === 3) {
+          return val;
+        }
+      }
+    }
+
+  },
+  movesLeft: function () {
+    for(let i=0;i<this.size;i++) {
+      for(let j=0;j<this.size;j++){
+        if(this.arrayElem[i][j] === 0)
+          return true;
+      }
+    }
+    return false;
   },
   completeMove: function (xVal, yVal) {
 
