@@ -73,15 +73,20 @@ $(function () {
     }
   });
 
-  // ticTacToeGame.arrayElem[0][0]=1;
-  // ticTacToeGame.arrayElem[0][1]=-1;
-  // ticTacToeGame.arrayElem[1][0]=1;
-  // ticTacToeGame.arrayElem[1][1]=-1;
-  // ticTacToeGame.arrayElem[0][2]=1;
-  // ticTacToeGame.arrayElem[1][2]=-1;
+  //ticTacToeGame.arrayElem[0][0]=-1;
+  ticTacToeGame.arrayElem[0][1]=-1;
+  ticTacToeGame.arrayElem[0][2]=1;
+
+  //ticTacToeGame.arrayElem[1][0]=-1;
+  ticTacToeGame.arrayElem[1][1]=1;
+  //ticTacToeGame.arrayElem[1][2]=-1;
+
+  ticTacToeGame.arrayElem[2][0]=-1;
+  //ticTacToeGame.arrayElem[2][1]=-1;
+  ticTacToeGame.arrayElem[2][2]=1;
 
   let ticTacToeAI1 = ticTacToeAI(ticTacToeGame);
-  console.log(ticTacToeAI1.findBestMove(0,0));
+  console.log(ticTacToeAI1.findBestMove());
   //console.log(ticTacToeAI1.findBestMove());
 });
 
@@ -205,8 +210,8 @@ let ticTacToeGame = {
     }
 
     //d1
+    let val = 0;
     for(let i=0;i<this.size;i++) {
-      let val = 0;
       for(let j=0;j<this.size;j++){
         if(i === j){
           val+=this.arrayElem[i][j];
@@ -218,8 +223,8 @@ let ticTacToeGame = {
     }
 
     //d2
+    val = 0;
     for(let i=0;i<this.size;i++) {
-      let val = 0;
       for(let j=0;j<this.size;j++){
         if(i + j === 2){
           val+=this.arrayElem[i][j];

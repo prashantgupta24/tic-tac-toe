@@ -41,7 +41,7 @@ function ticTacToeAI (ticTacToeGame) {
 
       //if game finished
       let val = ticTacToeGame.checkGameLong();
-      if(Math.abs(val === 3)) {
+      if(Math.abs(val) === 3) {
         if(val === 3) {
           return 10;
         }
@@ -55,7 +55,7 @@ function ticTacToeAI (ticTacToeGame) {
       }
 
       if(isMaxMove) {
-        let bestVal = -1;
+        let bestVal = -1000;
         for(let i=0;i<ticTacToeGame.size;i++) {
           for(let j=0;j<ticTacToeGame.size;j++){
             if(ticTacToeGame.arrayElem[i][j] === 0) {
@@ -68,7 +68,7 @@ function ticTacToeAI (ticTacToeGame) {
         }
         return bestVal;
       } else {
-        let bestVal = 1;
+        let bestVal = 1000;
         for(let i=0;i<ticTacToeGame.size;i++) {
           for(let j=0;j<ticTacToeGame.size;j++){
             if(ticTacToeGame.arrayElem[i][j] === 0) {
