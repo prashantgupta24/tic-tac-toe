@@ -1,23 +1,22 @@
-//http://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-3-tic-tac-toe-ai-finding-optimal-move/
-function ticTacToeAI (ticTacToeGame) {
+function ticTacToeAIFunction (ticTacToeGame) {
 
   return {
 
     findBestMove : function () {
       let bestMove, bestMoveVal = 0;
-      let isMaxMove = ticTacToeGame.turn === ticTacToeGame.turnEnum.CROSS ? true : false;
-      for(let i=0;i<ticTacToeGame.size;i++) {
-        for(let j=0;j<ticTacToeGame.size;j++){
+      let isMaxMove = ticTacToeGame.getTurn() === ticTacToeGame.turnEnum.CROSS ? true : false;
+      for(let i=0;i<ticTacToeGame.getSize();i++) {
+        for(let j=0;j<ticTacToeGame.getSize();j++){
           if(ticTacToeGame.arrayElem[i][j] === 0) {
             ticTacToeGame.arrayElem[i][j] = isMaxMove? 1 : -1;
             let val = this.minimax(!isMaxMove);
             if(isMaxMove) {
-              if(val > bestMoveVal){
+              if(val >= bestMoveVal){
                 bestMoveVal = val;
                 bestMove = (3 * i) + (j+1);
               }
             } else {
-              if(val < bestMove){
+              if(val <= bestMove){
                 bestMoveVal = val;
                 bestMove = (3 * i) + (j+1);
               }
@@ -28,14 +27,6 @@ function ticTacToeAI (ticTacToeGame) {
       }
       return bestMove;
     },
-
-    findBestMove1 : function() {
-      return 'test123';
-    },
-
-    // this.evaluate = function () {
-    //   return val;
-    // };
 
     minimax : function (isMaxMove) {
 
@@ -56,8 +47,8 @@ function ticTacToeAI (ticTacToeGame) {
 
       if(isMaxMove) {
         let bestVal = -1000;
-        for(let i=0;i<ticTacToeGame.size;i++) {
-          for(let j=0;j<ticTacToeGame.size;j++){
+        for(let i=0;i<ticTacToeGame.getSize();i++) {
+          for(let j=0;j<ticTacToeGame.getSize();j++){
             if(ticTacToeGame.arrayElem[i][j] === 0) {
               ticTacToeGame.arrayElem[i][j] = 1;
               //ticTacToeGame.turn = ticTacToeGame.turnEnum.CIRCLE;
@@ -69,8 +60,8 @@ function ticTacToeAI (ticTacToeGame) {
         return bestVal;
       } else {
         let bestVal = 1000;
-        for(let i=0;i<ticTacToeGame.size;i++) {
-          for(let j=0;j<ticTacToeGame.size;j++){
+        for(let i=0;i<ticTacToeGame.getSize();i++) {
+          for(let j=0;j<ticTacToeGame.getSize();j++){
             if(ticTacToeGame.arrayElem[i][j] === 0) {
               ticTacToeGame.arrayElem[i][j] = -1;
               //ticTacToeGame.turn = ticTacToeGame.turnEnum.CROSS;
@@ -81,11 +72,6 @@ function ticTacToeAI (ticTacToeGame) {
         }
         return bestVal;
       }
-
     }
-
-    // return {
-    //   findBestMove:findBestMove,
-    //   findBestMove1:findBestMove1
   };
 }
