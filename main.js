@@ -62,7 +62,7 @@ function ticTacToe(size) {
   let d2 = 0;
   let numMoves = 0;
 
-  let getSize = function () {
+  let getSize = function() {
     return size;
   };
 
@@ -82,7 +82,7 @@ function ticTacToe(size) {
     turn = setTurn;
   };
 
-  let getArrayElem = function () {
+  let getArrayElem = function() {
     return arrayElem;
   };
 
@@ -102,7 +102,7 @@ function ticTacToe(size) {
     canvas = createCanvas(grid);
     canvas.initializeCanvas(size);
     arrayElem = Array.matrix(size, size, 0),
-    chancesElem = $('#chances');
+      chancesElem = $('#chances');
     setPlaying(true);
     setTurn(turnEnum.CIRCLE);
     numMoves = 0;
@@ -131,7 +131,7 @@ function ticTacToe(size) {
     } else {
       numMoves += 1;
       arrayElem[xVal][yVal] = getTurn() === turnEnum.CROSS ? 1 : -1;
-      completeMove(yVal, xVal);
+      drawObject(yVal, xVal);
       let gameWon = checkGame(xVal, yVal);
 
       if (gameWon) {
@@ -173,69 +173,7 @@ function ticTacToe(size) {
     }
   };
 
-  let checkGameLongWay = function() {
-
-    //rows
-    for (let i = 0; i < size; i++) {
-      let val = 0;
-      for (let j = 0; j < size; j++) {
-        val += arrayElem[i][j];
-        if (Math.abs(val) === 3) {
-          return val;
-        }
-      }
-    }
-
-    //columns
-    for (let i = 0; i < size; i++) {
-      let val = 0;
-      for (let j = 0; j < size; j++) {
-        val += arrayElem[j][i];
-        if (Math.abs(val) === 3) {
-          return val;
-        }
-      }
-    }
-
-    //d1
-    let val = 0;
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        if (i === j) {
-          val += arrayElem[i][j];
-        }
-        if (Math.abs(val) === 3) {
-          return val;
-        }
-      }
-    }
-
-    //d2
-    val = 0;
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        if (i + j === 2) {
-          val += arrayElem[i][j];
-        }
-        if (Math.abs(val) === 3) {
-          return val;
-        }
-      }
-    }
-
-  };
-
-  let movesLeft = function() {
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        if (arrayElem[i][j] === 0)
-          return true;
-      }
-    }
-    return false;
-  };
-
-  let completeMove = function(xVal, yVal) {
+  let drawObject = function(xVal, yVal) {
 
     // let xVal = Math.floor((quad-1))%3;
     // let yVal = Math.floor((quad-1)/3);
@@ -257,16 +195,13 @@ function ticTacToe(size) {
   };
 
   return {
-    grid: grid,
-    getArrayElem:getArrayElem,
-    turnEnum:turnEnum,
-    isPlaying:isPlaying,
-    getSize:getSize,
-    getTurn:getTurn,
+    getArrayElem: getArrayElem,
+    turnEnum: turnEnum,
+    isPlaying: isPlaying,
+    getSize: getSize,
+    getTurn: getTurn,
     initialize: initialize,
-    playMove:playMove,
-    checkGameLongWay:checkGameLongWay,
-    movesLeft:movesLeft
+    playMove: playMove,
   };
 }
 
@@ -332,10 +267,10 @@ function createCanvas(gameGrid) {
     //console.log('canvas cleared');
   };
   return {
-    initializeCanvas:initializeCanvas,
-    drawCross:drawCross,
-    drawCircle:drawCircle,
-    clearCanvas:clearCanvas
+    initializeCanvas: initializeCanvas,
+    drawCross: drawCross,
+    drawCircle: drawCircle,
+    clearCanvas: clearCanvas
   };
 }
 
