@@ -1,5 +1,7 @@
 function ticTacToeAIFunction (ticTacToeGame) {
 
+  let arrayElem = ticTacToeGame.getArrayElem();
+
   return {
 
     findBestMove : function () {
@@ -7,8 +9,8 @@ function ticTacToeAIFunction (ticTacToeGame) {
       let isMaxMove = ticTacToeGame.getTurn() === ticTacToeGame.turnEnum.CROSS ? true : false;
       for(let i=0;i<ticTacToeGame.getSize();i++) {
         for(let j=0;j<ticTacToeGame.getSize();j++){
-          if(ticTacToeGame.arrayElem[i][j] === 0) {
-            ticTacToeGame.arrayElem[i][j] = isMaxMove? 1 : -1;
+          if(arrayElem[i][j] === 0) {
+            arrayElem[i][j] = isMaxMove? 1 : -1;
             let val = this.minimax(!isMaxMove);
             if(isMaxMove) {
               if(val >= bestMoveVal){
@@ -21,7 +23,7 @@ function ticTacToeAIFunction (ticTacToeGame) {
                 bestMove = (3 * i) + (j+1);
               }
             }
-            ticTacToeGame.arrayElem[i][j] = 0;
+            arrayElem[i][j] = 0;
           }
         }
       }
@@ -31,7 +33,7 @@ function ticTacToeAIFunction (ticTacToeGame) {
     minimax : function (isMaxMove) {
 
       //if game finished
-      let val = ticTacToeGame.checkGameLong();
+      let val = ticTacToeGame.checkGameLongWay();
       if(Math.abs(val) === 3) {
         if(val === 3) {
           return 10;
@@ -49,11 +51,11 @@ function ticTacToeAIFunction (ticTacToeGame) {
         let bestVal = -1000;
         for(let i=0;i<ticTacToeGame.getSize();i++) {
           for(let j=0;j<ticTacToeGame.getSize();j++){
-            if(ticTacToeGame.arrayElem[i][j] === 0) {
-              ticTacToeGame.arrayElem[i][j] = 1;
+            if(arrayElem[i][j] === 0) {
+              arrayElem[i][j] = 1;
               //ticTacToeGame.turn = ticTacToeGame.turnEnum.CIRCLE;
               bestVal = Math.max(this.minimax(!isMaxMove), bestVal);
-              ticTacToeGame.arrayElem[i][j] = 0;
+              arrayElem[i][j] = 0;
             }
           }
         }
@@ -62,11 +64,11 @@ function ticTacToeAIFunction (ticTacToeGame) {
         let bestVal = 1000;
         for(let i=0;i<ticTacToeGame.getSize();i++) {
           for(let j=0;j<ticTacToeGame.getSize();j++){
-            if(ticTacToeGame.arrayElem[i][j] === 0) {
-              ticTacToeGame.arrayElem[i][j] = -1;
+            if(arrayElem[i][j] === 0) {
+              arrayElem[i][j] = -1;
               //ticTacToeGame.turn = ticTacToeGame.turnEnum.CROSS;
               bestVal = Math.min(this.minimax(!isMaxMove), bestVal);
-              ticTacToeGame.arrayElem[i][j] = 0;
+              arrayElem[i][j] = 0;
             }
           }
         }
