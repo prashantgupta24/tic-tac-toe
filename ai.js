@@ -1,9 +1,9 @@
-function ticTacToeAIFunction(ticTacToeGame) {
+function createTicTacToeAI(ticTacToeGame) {
 
   let arrayElem = ticTacToeGame.getArrayElem();
   let size = ticTacToeGame.getSize();
 
-  let checkGame = function() {
+  function checkGame() {
 
     //rows
     for (let i = 0; i < size; i++) {
@@ -53,9 +53,9 @@ function ticTacToeAIFunction(ticTacToeGame) {
       }
     }
 
-  };
+  }
 
-  let movesLeft = function() {
+  function movesLeft() {
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
         if (arrayElem[i][j] === 0)
@@ -63,7 +63,7 @@ function ticTacToeAIFunction(ticTacToeGame) {
       }
     }
     return false;
-  };
+  }
 
   return {
 
