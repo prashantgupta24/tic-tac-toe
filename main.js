@@ -20,19 +20,20 @@ $(function() {
     }
   });
 
-  // ticTacToeGame.arrayElem[0][0]=1;
-  // ticTacToeGame.arrayElem[0][1]=-1;
-  // ticTacToeGame.arrayElem[0][2]=1;
-
-  //ticTacToeGame.arrayElem[1][0]=-1;
-  //ticTacToeGame.arrayElem[1][1]=-1;
-  //ticTacToeGame.arrayElem[1][2]=1;
-
-  //ticTacToeGame.arrayElem[2][0]=-1;
-  //ticTacToeGame.arrayElem[2][1]=-1;
-  //ticTacToeGame.arrayElem[2][2]=1;
-
-  // let ticTacToeAI = ticTacToeAIFunction(ticTacToeGame);
+  // let arrayElem = ticTacToeGame.getArrayElem();
+  // //arrayElem[0][0]=1;
+  // arrayElem[0][1]=1;
+  // //arrayElem[0][2]=1;
+  //
+  // //arrayElem[1][0]=-1;
+  // //arrayElem[1][1]=-1;
+  // arrayElem[1][2]=1;
+  //
+  // arrayElem[2][0]=-1;
+  // arrayElem[2][1]=-1;
+  // arrayElem[2][2]=1;
+  //
+  // let ticTacToeAI = createTicTacToeAI(ticTacToeGame);
   // console.log(ticTacToeAI.findBestMove());
 
   function ticTacToe(size) {
