@@ -183,13 +183,13 @@ $(function() {
     }
 
     return {
-      getArrayElem: getArrayElem,
-      turnEnum: turnEnum,
-      isPlaying: isPlaying,
-      getSize: getSize,
-      getTurn: getTurn,
-      initialize: initialize,
-      playMove: playMove,
+      getArrayElem,
+      turnEnum,
+      isPlaying,
+      getSize,
+      getTurn,
+      initialize,
+      playMove
     };
   }
 
@@ -256,10 +256,10 @@ $(function() {
     }
 
     return {
-      initializeCanvas: initializeCanvas,
-      drawCross: drawCross,
-      drawCircle: drawCircle,
-      clearCanvas: clearCanvas
+      initializeCanvas,
+      drawCross,
+      drawCircle,
+      clearCanvas
     };
   }
 
