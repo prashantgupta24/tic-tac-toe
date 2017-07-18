@@ -99,7 +99,7 @@ $(function() {
           break;
         }
       }
-      if(xVal >=1 && yVal >=1) {
+      if(xVal >=1 && yVal >=1 && playing) {
         //console.log(yVal-1, xVal-1);
         let validMove = playMove(yVal-1, xVal-1);
         if(validMove && playing) {
