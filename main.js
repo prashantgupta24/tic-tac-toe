@@ -1,24 +1,25 @@
 $(function() {
   //console.log('ready');
+
   let ticTacToeGame = ticTacToe(3); //main value, sets size of the game board (size * size)
   ticTacToeGame.initialize();
 
-  let ticTacToeAI = createTicTacToeAI(ticTacToeGame);
 
-  $(document).keypress(function(event) {
-    if (ticTacToeGame.isPlaying()) {
-      let keyCode = event.which || event.keyCode;
-      //console.log(keyCode);
-      let validMove = false;
-      if (keyCode >= 49 && keyCode <= 57) {
-        validMove = ticTacToeGame.playMove(String.fromCharCode(keyCode));
-      }
-      if (ticTacToeGame.isPlaying() && validMove) {
-        let moveByAI = ticTacToeAI.findBestMove();
-        ticTacToeGame.playMove(moveByAI);
-      }
-    }
-  });
+
+  // $(document).keypress(function(event) {
+  //   if (ticTacToeGame.isPlaying()) {
+  //     let keyCode = event.which || event.keyCode;
+  //     //console.log(keyCode);
+  //     let validMove = false;
+  //     if (keyCode >= 49 && keyCode <= 57) {
+  //       validMove = ticTacToeGame.playMove(String.fromCharCode(keyCode));
+  //     }
+  //     if (ticTacToeGame.isPlaying() && validMove) {
+  //       let moveByAI = ticTacToeAI.findBestMove();
+  //       ticTacToeGame.playMove(moveByAI);
+  //     }
+  //   }
+  // });
 
   // let arrayElem = ticTacToeGame.getArrayElem();
   // //arrayElem[0][0]=1;
@@ -49,6 +50,7 @@ $(function() {
     let d1 = 0;
     let d2 = 0;
     let numMoves = 0;
+    let ticTacToeAI = {};
 
     function getSize() {
       return size;
@@ -87,15 +89,62 @@ $(function() {
     };
 
     function initialize() {
+
       canvas = createCanvas(grid);
       canvas.initializeCanvas(size);
+      initializeMouseMove();
+      //console.log(grid);
       arrayElem = arrayMatrix(size, size, 0),
-        chancesElem = $('#chances');
+      chancesElem = $('#chances');
       setPlaying(true);
       setTurn(turnEnum.CIRCLE);
       numMoves = 0;
       chancesElem.html(getTurn());
       initializeArrays();
+      ticTacToeAI = createTicTacToeAI(this);
+    }
+
+    function initializeMouseMove() {
+      let canvasElement = document.getElementById('wordCanvas');
+      let rect = canvasElement.getBoundingClientRect();
+      // $('#wordCanvas').on('mousemove', function(event) {
+      //   let x = event.pageX-rect.left;
+      //   let y = event.pageY-rect.top;
+      //   let msg = x + ', ' + y;
+      //   $('#note').html(msg);
+      // });
+      $('#wordCanvas').on('click', function(event) {
+        let x = event.pageX-rect.left;
+        let y = event.pageY-rect.top;
+        //console.log(x + ', ' + y);
+        handleMouseClick(x, y);
+      });
+    }
+
+    function handleMouseClick(x, y) {
+      let xVal = 0;
+      let yVal = 0;
+      for(let i=1;i<=size;i++) {
+        if(x >= grid['x' + (i)] && x < grid['x' + (i+1)]) {
+          xVal = i;
+          break;
+        }
+      }
+
+      for(let i=1;i<=size;i++) {
+        if(y >= grid['y' + (i)] && y < grid['y' + (i+1)]) {
+          yVal = i;
+          break;
+        }
+      }
+      if(xVal >=1 && yVal >=1) {
+        //console.log(yVal-1, xVal-1);
+        let validMove = playMove(yVal-1, xVal-1);
+        if(validMove && playing) {
+          let moveByAI = ticTacToeAI.findBestMove();
+          playMove(moveByAI.x, moveByAI.y);
+        }
+      }
     }
 
     function initializeArrays() {
@@ -108,10 +157,10 @@ $(function() {
       }
     }
 
-    function playMove(quad) {
+    function playMove(xVal, yVal) {
 
-      let xVal = Math.floor((quad - 1) / size);
-      let yVal = Math.floor((quad - 1)) % size;
+      //let xVal = Math.floor((quad - 1) / size);
+      //let yVal = Math.floor((quad - 1)) % size;
 
       if (arrayElem[xVal][yVal] != 0) {
         alert('That spot is filled!');

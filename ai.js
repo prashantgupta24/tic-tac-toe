@@ -3,10 +3,15 @@ function createTicTacToeAI(ticTacToeGame) {
   let arrayElem = ticTacToeGame.getArrayElem();
   let size = ticTacToeGame.getSize();
 
+  let move = function(x, y){
+    this.x = x;
+    this.y = y;
+  };
+
   return {
 
     findBestMove: function() {
-      let bestMove = 0;
+      let bestMove = {};
       let bestMoveValMax = -1000;
       let bestMoveValMin = 1000;
 
@@ -19,12 +24,12 @@ function createTicTacToeAI(ticTacToeGame) {
             if (isMaxMove) {
               if (val >= bestMoveValMax) {
                 bestMoveValMax = val;
-                bestMove = (3 * i) + (j + 1);
+                bestMove = new move(i, j);
               }
             } else {
               if (val <= bestMoveValMin) {
                 bestMoveValMin = val;
-                bestMove = (3 * i) + (j + 1);
+                bestMove = new move(i, j);
               }
             }
             arrayElem[i][j] = 0;
