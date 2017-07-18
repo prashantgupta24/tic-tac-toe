@@ -4,39 +4,6 @@ $(function() {
   let ticTacToeGame = ticTacToe(3); //main value, sets size of the game board (size * size)
   ticTacToeGame.initialize();
 
-
-
-  // $(document).keypress(function(event) {
-  //   if (ticTacToeGame.isPlaying()) {
-  //     let keyCode = event.which || event.keyCode;
-  //     //console.log(keyCode);
-  //     let validMove = false;
-  //     if (keyCode >= 49 && keyCode <= 57) {
-  //       validMove = ticTacToeGame.playMove(String.fromCharCode(keyCode));
-  //     }
-  //     if (ticTacToeGame.isPlaying() && validMove) {
-  //       let moveByAI = ticTacToeAI.findBestMove();
-  //       ticTacToeGame.playMove(moveByAI);
-  //     }
-  //   }
-  // });
-
-  // let arrayElem = ticTacToeGame.getArrayElem();
-  // //arrayElem[0][0]=1;
-  // arrayElem[0][1]=1;
-  // //arrayElem[0][2]=1;
-  //
-  // //arrayElem[1][0]=-1;
-  // //arrayElem[1][1]=-1;
-  // arrayElem[1][2]=1;
-  //
-  // arrayElem[2][0]=-1;
-  // arrayElem[2][1]=-1;
-  // arrayElem[2][2]=1;
-  //
-  // let ticTacToeAI = createTicTacToeAI(ticTacToeGame);
-  // console.log(ticTacToeAI.findBestMove());
-
   function ticTacToe(size) {
 
     let turn = '';
@@ -107,12 +74,7 @@ $(function() {
     function initializeMouseMove() {
       let canvasElement = document.getElementById('wordCanvas');
       let rect = canvasElement.getBoundingClientRect();
-      // $('#wordCanvas').on('mousemove', function(event) {
-      //   let x = event.pageX-rect.left;
-      //   let y = event.pageY-rect.top;
-      //   let msg = x + ', ' + y;
-      //   $('#note').html(msg);
-      // });
+
       $('#wordCanvas').on('click', function(event) {
         let x = event.pageX-rect.left;
         let y = event.pageY-rect.top;
@@ -158,9 +120,6 @@ $(function() {
     }
 
     function playMove(xVal, yVal) {
-
-      //let xVal = Math.floor((quad - 1) / size);
-      //let yVal = Math.floor((quad - 1)) % size;
 
       if (arrayElem[xVal][yVal] != 0) {
         alert('That spot is filled!');
@@ -211,9 +170,6 @@ $(function() {
     }
 
     function drawObject(xVal, yVal) {
-
-      // let xVal = Math.floor((quad-1))%3;
-      // let yVal = Math.floor((quad-1)/3);
 
       let threshold = 20;
 

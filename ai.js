@@ -61,7 +61,6 @@ function createTicTacToeAI(ticTacToeGame) {
           for (let j = 0; j < size; j++) {
             if (arrayElem[i][j] === 0) {
               arrayElem[i][j] = 1;
-              //ticTacToeGame.turn = ticTacToeGame.turnEnum.CIRCLE;
               bestVal = Math.max(this.minimax(!isMaxMove, depth+1), bestVal);
               arrayElem[i][j] = 0;
             }
@@ -74,7 +73,6 @@ function createTicTacToeAI(ticTacToeGame) {
           for (let j = 0; j < size; j++) {
             if (arrayElem[i][j] === 0) {
               arrayElem[i][j] = -1;
-              //ticTacToeGame.turn = ticTacToeGame.turnEnum.CROSS;
               bestVal = Math.min(this.minimax(!isMaxMove, depth+1), bestVal);
               arrayElem[i][j] = 0;
             }
