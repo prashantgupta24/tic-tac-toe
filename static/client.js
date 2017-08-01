@@ -68,7 +68,7 @@ $(function() {
       numMoves = 0;
       chancesElem.html(getTurn());
       initializeArrays();
-      ticTacToeAI = createTicTacToeAI(this);
+      //ticTacToeAI = createTicTacToeAI(this);
     }
 
     function initializeMouseMove() {
@@ -102,10 +102,10 @@ $(function() {
       if(xVal >=1 && yVal >=1 && playing) {
         //console.log(yVal-1, xVal-1);
         let validMove = playMove(yVal-1, xVal-1);
-        if(validMove && playing) {
-          let moveByAI = ticTacToeAI.findBestMove();
-          playMove(moveByAI.x, moveByAI.y);
-        }
+        // if(validMove && playing) {
+        //   let moveByAI = ticTacToeAI.findBestMove();
+        //   playMove(moveByAI.x, moveByAI.y);
+        // }
       }
     }
 
@@ -286,3 +286,19 @@ $(function() {
   }
 
 });
+
+var socket = io();
+
+socket.on('message', function(data) {
+  console.log(data);
+});
+
+// socket.on('new player found', function(data) {
+//   console.log(data);
+// });
+
+socket.emit('new player');
+
+// setInterval(function() {
+//   socket.emit('movement', movement);
+// }, 1000 / 60);
