@@ -1,8 +1,30 @@
 $(function() {
   //console.log('ready');
 
+
   let ticTacToeGame = ticTacToe(3); //main value, sets size of the game board (size * size)
   ticTacToeGame.initialize();
+
+  let socket = io();
+  socket.emit('new player');
+  socket.on('message', function(data) {
+    console.log(data);
+  });
+  socket.on('turn', function(data) {
+    //console.log(data);
+    ticTacToeGame.setPlaying(data);
+    if(data) {
+      ticTacToeGame.setPlayingElem('YOUR TURN');
+    } else {
+      ticTacToeGame.setPlayingElem('waiting for other player');
+    }
+    console.log('in game : ' + ticTacToeGame.isPlaying());
+  });
+  socket.on('move', function(data) {
+    //console.log(data);
+    console.log('Moved : ' + data.xVal, data.yVal);
+    ticTacToeGame.playMove(data.xVal, data.yVal);
+  });
 
   function ticTacToe(size) {
 
@@ -11,13 +33,14 @@ $(function() {
     let canvas = {};
     let arrayElem = [];
     let chancesElem = '';
+    let playingElem = '';
     let playing = false;
     let rows = [];
     let columns = [];
     let d1 = 0;
     let d2 = 0;
     let numMoves = 0;
-    let ticTacToeAI = {};
+    //let ticTacToeAI = {};
 
     function getSize() {
       return size;
@@ -43,6 +66,10 @@ $(function() {
       return arrayElem;
     }
 
+    function setPlayingElem(data) {
+      playingElem.html(data);
+    }
+
     let turnEnum = {
       CROSS: 'CROSS',
       CIRCLE: 'CIRCLE',
@@ -63,10 +90,11 @@ $(function() {
       //console.log(grid);
       arrayElem = arrayMatrix(size, size, 0),
       chancesElem = $('#chances');
+      playingElem = $('#playing');
       setPlaying(true);
       setTurn(turnEnum.CIRCLE);
       numMoves = 0;
-      chancesElem.html(getTurn());
+      chancesElem.html('Chance: ' + getTurn());
       initializeArrays();
       //ticTacToeAI = createTicTacToeAI(this);
     }
@@ -102,6 +130,12 @@ $(function() {
       if(xVal >=1 && yVal >=1 && playing) {
         //console.log(yVal-1, xVal-1);
         let validMove = playMove(yVal-1, xVal-1);
+        if(validMove) {
+          socket.emit('move', {
+            xVal:yVal-1,
+            yVal:xVal-1
+          });
+        }
         // if(validMove && playing) {
         //   let moveByAI = ticTacToeAI.findBestMove();
         //   playMove(moveByAI.x, moveByAI.y);
@@ -142,7 +176,7 @@ $(function() {
           setPlaying(false);
         } else {
           setTurn(getTurn() === turnEnum.CIRCLE ? turnEnum.CROSS : turnEnum.CIRCLE);
-          chancesElem.html(getTurn());
+          chancesElem.html('Chance: ' + getTurn());
         }
         return true;
       }
@@ -188,13 +222,15 @@ $(function() {
     }
 
     return {
+      setPlaying,
       getArrayElem,
       turnEnum,
       isPlaying,
       getSize,
       getTurn,
       initialize,
-      playMove
+      playMove,
+      setPlayingElem
     };
   }
 
@@ -287,17 +323,12 @@ $(function() {
 
 });
 
-var socket = io();
-
-socket.on('message', function(data) {
-  console.log(data);
-});
 
 // socket.on('new player found', function(data) {
 //   console.log(data);
 // });
 
-socket.emit('new player');
+
 
 // setInterval(function() {
 //   socket.emit('movement', movement);
