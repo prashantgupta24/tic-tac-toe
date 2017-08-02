@@ -6,23 +6,28 @@ $(function() {
   ticTacToeGame.initialize();
 
   let socket = io();
+  let roomNo;
+
   socket.emit('new player');
   socket.on('message', function(data) {
-    console.log(data);
+    ticTacToeGame.setPlayingElem(data);
+  });
+  socket.on('room', function(data) {
+    console.log('Joined room ' + data);
+    roomNo = data;
   });
   socket.on('turn', function(data) {
-    //console.log(data);
     ticTacToeGame.setPlaying(data);
     if(data) {
       ticTacToeGame.setPlayingElem('YOUR TURN');
     } else {
-      ticTacToeGame.setPlayingElem('waiting for other player');
+      ticTacToeGame.setPlayingElem('Other player\'s turn');
     }
-    console.log('in game : ' + ticTacToeGame.isPlaying());
+    //console.log('in game : ' + ticTacToeGame.isPlaying());
   });
   socket.on('move', function(data) {
     //console.log(data);
-    console.log('Moved : ' + data.xVal, data.yVal);
+    console.log('They moved : ' + data.xVal, data.yVal);
     ticTacToeGame.playMove(data.xVal, data.yVal);
   });
 
@@ -91,10 +96,11 @@ $(function() {
       arrayElem = arrayMatrix(size, size, 0),
       chancesElem = $('#chances');
       playingElem = $('#playing');
-      setPlaying(true);
+      //setPlaying(true);
       setTurn(turnEnum.CIRCLE);
       numMoves = 0;
       chancesElem.html('Chance: ' + getTurn());
+      //playingElem.html('Chance: ' + 'Waiting for other player to join');
       initializeArrays();
       //ticTacToeAI = createTicTacToeAI(this);
     }
@@ -132,6 +138,7 @@ $(function() {
         let validMove = playMove(yVal-1, xVal-1);
         if(validMove) {
           socket.emit('move', {
+            roomNo,
             xVal:yVal-1,
             yVal:xVal-1
           });

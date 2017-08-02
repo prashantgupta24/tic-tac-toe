@@ -21,52 +21,63 @@ server.listen(5000, function() {
   console.log('Starting server on port 5000');
 });
 
+let roomNo = 1;
 let waitingPlayer;
+let roomSocketMapping = {};
+
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
   socket.on('new player', function() {
-    console.log('new player : ' + socket.id);
+    //console.log('new player : ' + socket.id);
     if (waitingPlayer) {
       //io.emit('message', 'match started!');
-      startMatch(socket, waitingPlayer);
+      socket.join(roomNo);
+      roomSocketMapping[waitingPlayer.id] = roomNo;
+      roomSocketMapping[socket.id] = roomNo;
+      startMatch(socket, roomNo);
+      roomNo++;
       waitingPlayer = '';
+      console.log(roomSocketMapping);
 
     } else {
       waitingPlayer = socket;
-      socket.emit('message', 'Waiting for another player');
+      socket.join(roomNo);
+      socket.emit('message', 'Waiting for another player to join room ' + roomNo);
+      console.log(roomSocketMapping);
     }
   });
-  // socket.on('disconnect', function() {
-  //   console.log('disconnecting : ' + socket.id);
-  //   if (waitingPlayer) {
-  //     waitingPlayer = null;
-  //   }
-  // });
-  socket.on('move', function (data) {
-    console.log('played ' + data.xVal, data.yVal, socket.id);
-    socket.broadcast.emit('move', data);
-    socket.emit('turn', false);
-    socket.broadcast.emit('turn', true);
+  socket.on('disconnect', function() {
+    console.log('disconnecting : ' + socket.id);
+    if (waitingPlayer) {
+      waitingPlayer = null;
+    }
+    socket.broadcast.to(roomSocketMapping[socket.id]).emit('message', 'Other player left, sorry');
   });
+  socket.on('move', function(data) {
+    //console.log('played ' + data.xVal, data.yVal, socket.id);
+    socket.broadcast.to(data.roomNo).emit('move', data);
+    socket.emit('turn', false);
+    socket.broadcast.to(data.roomNo).emit('turn', true);
+  });
+
+  function startMatch(socket, roomNo) {
+
+    io.to(roomNo).emit('room', roomNo);
+    //io.to(roomNo).emit('message', 'match started!');
+    if(Math.random()>0.5) {
+      socket.emit('turn', false);
+      socket.broadcast.to(roomNo).emit('turn', true);
+    } else {
+      socket.emit('turn', true);
+      socket.broadcast.to(roomNo).emit('turn', false);
+    }
+
+
+  }
+
 });
 
-let players = [];
 
-function startMatch(player1, player2) {
-  players.push(player1);
-  players.push(player2);
-
-  // players.forEach(function(player) {
-  //   player.emit('message', 'match started!');
-  //   console.log(player.id);
-  // });
-
-  player1.emit('message', 'match started!');
-  player1.broadcast.emit('message', 'match started!');
-
-  player1.emit('turn', false);
-  player1.broadcast.emit('turn', true);
-}
 
 // function onMove(data) {
 //   console.log('played ' + data.xVal, data.yVal, socket.id);
