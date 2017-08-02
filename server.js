@@ -22,36 +22,37 @@ server.listen(5000, function() {
 });
 
 let roomNo = 1;
-let waitingPlayer;
 let roomSocketMapping = {};
+let room = {};
 
 // Add the WebSocket handlers
 io.on('connection', function(socket) {
   socket.on('new player', function() {
     //console.log('new player : ' + socket.id);
-    if (waitingPlayer) {
+    if (room[roomNo]>0) {
       //io.emit('message', 'match started!');
       socket.join(roomNo);
-      roomSocketMapping[waitingPlayer.id] = roomNo;
       roomSocketMapping[socket.id] = roomNo;
       startMatch(socket, roomNo);
       roomNo++;
-      waitingPlayer = '';
-      console.log(roomSocketMapping);
-
+      //console.log(roomSocketMapping);
     } else {
-      waitingPlayer = socket;
       socket.join(roomNo);
       socket.emit('message', 'Waiting for another player to join room ' + roomNo);
-      console.log(roomSocketMapping);
+      roomSocketMapping[socket.id] = roomNo;
+      room[roomNo] = 1;
+      //console.log(roomSocketMapping);
+      //console.log(room);
     }
   });
   socket.on('disconnect', function() {
-    console.log('disconnecting : ' + socket.id);
-    if (waitingPlayer) {
-      waitingPlayer = null;
-    }
+    //console.log('disconnecting : ' + socket.id);
     socket.broadcast.to(roomSocketMapping[socket.id]).emit('message', 'Other player left, sorry');
+    if(roomSocketMapping[socket.id]) {
+      delete room[roomSocketMapping[socket.id]];
+      delete roomSocketMapping[socket.id];
+    }
+    //console.log(room);
   });
   socket.on('move', function(data) {
     //console.log('played ' + data.xVal, data.yVal, socket.id);
@@ -61,9 +62,7 @@ io.on('connection', function(socket) {
   });
 
   function startMatch(socket, roomNo) {
-
     io.to(roomNo).emit('room', roomNo);
-    //io.to(roomNo).emit('message', 'match started!');
     if(Math.random()>0.5) {
       socket.emit('turn', false);
       socket.broadcast.to(roomNo).emit('turn', true);
@@ -71,18 +70,5 @@ io.on('connection', function(socket) {
       socket.emit('turn', true);
       socket.broadcast.to(roomNo).emit('turn', false);
     }
-
-
   }
-
 });
-
-
-
-// function onMove(data) {
-//   console.log('played ' + data.xVal, data.yVal, socket.id);
-// }
-//
-// setInterval(function() {
-//   io.sockets.emit('message', 'hi!');
-// }, 1000);
