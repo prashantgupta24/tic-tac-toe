@@ -1,7 +1,6 @@
 $(function() {
   //console.log('ready');
 
-
   let ticTacToeGame = ticTacToe(3); //main value, sets size of the game board (size * size)
   ticTacToeGame.initialize();
 
@@ -23,7 +22,6 @@ $(function() {
     } else {
       ticTacToeGame.setPlayingElem('Other player\'s turn');
     }
-    //console.log('in game : ' + ticTacToeGame.isPlaying());
   });
   socket.on('move', function(data) {
     //console.log(data);
@@ -45,7 +43,6 @@ $(function() {
     let d1 = 0;
     let d2 = 0;
     let numMoves = 0;
-    //let ticTacToeAI = {};
 
     function getSize() {
       return size;
@@ -100,9 +97,8 @@ $(function() {
       setTurn(turnEnum.CIRCLE);
       numMoves = 0;
       chancesElem.html('Chance: ' + getTurn());
-      //playingElem.html('Chance: ' + 'Waiting for other player to join');
+      //
       initializeArrays();
-      //ticTacToeAI = createTicTacToeAI(this);
     }
 
     function initializeMouseMove() {
@@ -143,10 +139,6 @@ $(function() {
             yVal:xVal-1
           });
         }
-        // if(validMove && playing) {
-        //   let moveByAI = ticTacToeAI.findBestMove();
-        //   playMove(moveByAI.x, moveByAI.y);
-        // }
       }
     }
 
@@ -174,6 +166,7 @@ $(function() {
         if (gameWon) {
           setTimeout(function() {
             alert(getTurn() + ' won!');
+            playingElem.html('Match finished! Hit refresh to start a new game');
           }, 100);
           setPlaying(false);
         } else if (numMoves === size * size) {
@@ -230,11 +223,6 @@ $(function() {
 
     return {
       setPlaying,
-      getArrayElem,
-      turnEnum,
-      isPlaying,
-      getSize,
-      getTurn,
       initialize,
       playMove,
       setPlayingElem
@@ -329,14 +317,3 @@ $(function() {
   }
 
 });
-
-
-// socket.on('new player found', function(data) {
-//   console.log(data);
-// });
-
-
-
-// setInterval(function() {
-//   socket.emit('movement', movement);
-// }, 1000 / 60);

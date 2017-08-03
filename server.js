@@ -30,7 +30,6 @@ io.on('connection', function(socket) {
   socket.on('new player', function() {
     //console.log('new player : ' + socket.id);
     if (room[roomNo]>0) {
-      //io.emit('message', 'match started!');
       socket.join(roomNo);
       roomSocketMapping[socket.id] = roomNo;
       startMatch(socket, roomNo);
