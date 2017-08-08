@@ -61,6 +61,9 @@ io.on('connection', function(socket) {
     socket.emit('turn', false);
     socket.broadcast.to(data.roomNo).emit('turn', true);
   });
+  socket.on('finished', function(data) {
+    io.to(data.roomNo).emit('message', 'Match finished! Hit refresh to start a new game');
+  });
 
   function startMatch(socket, roomNo, player1, player2) {
     io.to(roomNo).emit('room', {

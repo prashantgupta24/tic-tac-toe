@@ -175,13 +175,17 @@ $(function() {
       }
       if (xVal >= 1 && yVal >= 1 && playing) {
         //console.log(yVal-1, xVal-1);
-        let validMove = playMove(yVal - 1, xVal - 1);
-        if (validMove) {
-          const roomNo = SOCKET_OBJ.roomNo;
+        let result = playMove(yVal - 1, xVal - 1);
+        if (result.validMove) {
           SOCKET_OBJ.socket.emit('move', {
-            roomNo,
+            roomNo: SOCKET_OBJ.roomNo,
             xVal: yVal - 1,
             yVal: xVal - 1
+          });
+        }
+        if (result.gameOver) {
+          SOCKET_OBJ.socket.emit('finished', {
+            roomNo: SOCKET_OBJ.roomNo
           });
         }
       }
@@ -201,7 +205,10 @@ $(function() {
 
       if (arrayElem[xVal][yVal] != 0) {
         alert('That spot is filled!');
-        return false;
+        return {
+          validMove: false,
+          gameOver: false
+        };
       } else {
         numMoves += 1;
         arrayElem[xVal][yVal] = getTurn() === turnEnum.CROSS ? 1 : -1;
@@ -211,19 +218,29 @@ $(function() {
         if (gameWon) {
           setTimeout(function() {
             alert(getTurn() + ' won!');
-            playingElem.html('Match finished! Hit refresh to start a new game');
           }, 100);
           setPlaying(false);
+          return {
+            validMove: true,
+            gameOver: true
+          };
         } else if (numMoves === size * size) {
           setTimeout(function() {
             alert('Game draw!');
           }, 100);
           setPlaying(false);
+          return {
+            validMove: true,
+            gameOver: true
+          };
         } else {
           setTurn(getTurn() === turnEnum.CIRCLE ? turnEnum.CROSS : turnEnum.CIRCLE);
           chancesElem.html('Chance: ' + getTurn());
         }
-        return true;
+        return {
+          validMove: true,
+          gameOver: false
+        };
       }
     }
 
