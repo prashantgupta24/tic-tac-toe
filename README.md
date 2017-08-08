@@ -6,4 +6,4 @@ To play, just click on the link below, type in your name, and tell your friend t
 
 Check out a basic demo:
 
-![](https://github.com/prashantgupta24/tic-tac-toe/blob/server-game/tic-tac-toe-2-player.gif)
+![](https://github.com/prashantgupta24/tic-tac-toe/blob/server_game/tic-tac-toe-2-player.gif)
