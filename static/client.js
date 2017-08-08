@@ -64,7 +64,7 @@ $(function() {
     });
 
     socket.on('turn', function(data) {
-      console.log('turn ' + data);
+      //console.log('turn ' + data);
       ticTacToeGame.setPlaying(data);
       if (data) {
         ticTacToeGame.setPlayingElem('YOUR TURN, You are playing with ' + ticTacToeGame.otherPlayer);
@@ -78,8 +78,7 @@ $(function() {
     });
 
     socket.on('move', function(data) {
-      //console.log(data);
-      console.log('They moved : ' + data.xVal, data.yVal);
+      //console.log('They moved : ' + data.xVal, data.yVal);
       ticTacToeGame.playMove(data.xVal, data.yVal);
     });
 
