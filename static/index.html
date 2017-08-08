@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="static/client.js"></script>
 </head>
 
 <body>
 
+  <div id="initialDiv">
+    <h3>Please enter name to start: (min 3 characters) </h3>
+    <input type=text id="player_name"></input>
+    <input type=button id="start_game" value="Start Game"></input>
+    <p id="error"></p>
+  </div>
+
   <canvas id="wordCanvas" width="500" height="500" style="border:1px solid #d3d3d3;">
   Your browser does not support the canvas element.
   </canvas>
 
-<div>
-  <p id = "chances"></p>
-  <p id = "playing">Playing:</p>
-</div>
+  <div>
+    <p id="chances"></p>
+    <p id="playing">Playing:</p>
+  </div>
 
-<div>
-  <p id = "note">
-</div>
+  <div>
+    <p id="note">
+  </div>
 
 </body>
 

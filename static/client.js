@@ -2,32 +2,92 @@ $(function() {
   //console.log('ready');
 
   let ticTacToeGame = ticTacToe(3); //main value, sets size of the game board (size * size)
-  ticTacToeGame.initialize();
+  const SOCKET_OBJ = initializeSocket();
+  initializePage();
 
-  let socket = io();
-  let roomNo;
 
-  socket.emit('new player');
-  socket.on('message', function(data) {
-    ticTacToeGame.setPlayingElem(data);
-  });
-  socket.on('room', function(data) {
-    console.log('Joined room ' + data);
-    roomNo = data;
-  });
-  socket.on('turn', function(data) {
-    ticTacToeGame.setPlaying(data);
-    if(data) {
-      ticTacToeGame.setPlayingElem('YOUR TURN');
+  function initializePage() {
+    if ($.cookie('username')) {
+      console.log('Welcome back ' + $.cookie('username'));
+      $('#initialDiv').hide();
+      startGame();
     } else {
-      ticTacToeGame.setPlayingElem('Other player\'s turn');
+      $('#player_name').focus();
+      $(document).on('keypress', function(event) {
+        if (event.keyCode === 13) {
+          setupGame();
+        }
+      });
+
+      $('#start_game').on('click', function() {
+        setupGame();
+      });
     }
-  });
-  socket.on('move', function(data) {
-    //console.log(data);
-    console.log('They moved : ' + data.xVal, data.yVal);
-    ticTacToeGame.playMove(data.xVal, data.yVal);
-  });
+  }
+
+  function setupGame() {
+    const PLAYER_NAME = $('#player_name').val();
+    if (PLAYER_NAME.length < 3 ||
+      PLAYER_NAME.indexOf('prashant') > -1) {
+      $('#error').html('Please enter a decent name');
+    } else {
+      $.cookie('username', PLAYER_NAME);
+      $('#initialDiv').hide();
+      $(document).unbind('keypress');
+      startGame();
+    }
+  }
+
+  function startGame() {
+    SOCKET_OBJ.socket.emit('new player', {
+      playerName: $.cookie('username')
+    });
+    ticTacToeGame.initialize();
+  }
+
+  function initializeSocket() {
+    let socket = io();
+
+    socket.on('message', function(data) {
+      ticTacToeGame.setPlayingElem(data);
+    });
+
+    socket.on('room', function(data) {
+      console.log('Joined room ' + data.roomNo + ' : ' + $.cookie('username'));
+      SOCKET_OBJ.roomNo = data.roomNo;
+      if ($.cookie('username') === data.player1) {
+        ticTacToeGame.otherPlayer = data.player2;
+      } else {
+        ticTacToeGame.otherPlayer = data.player1;
+      }
+      //console.log('playing with ' + ticTacToeGame.otherPlayer);
+    });
+
+    socket.on('turn', function(data) {
+      console.log('turn ' + data);
+      ticTacToeGame.setPlaying(data);
+      if (data) {
+        ticTacToeGame.setPlayingElem('YOUR TURN, You are playing with ' + ticTacToeGame.otherPlayer);
+      } else {
+        if (ticTacToeGame.otherPlayer[ticTacToeGame.otherPlayer.length - 1] === 's') {
+          ticTacToeGame.setPlayingElem(ticTacToeGame.otherPlayer + '\' turn');
+        } else {
+          ticTacToeGame.setPlayingElem(ticTacToeGame.otherPlayer + '\'s turn');
+        }
+      }
+    });
+
+    socket.on('move', function(data) {
+      //console.log(data);
+      console.log('They moved : ' + data.xVal, data.yVal);
+      ticTacToeGame.playMove(data.xVal, data.yVal);
+    });
+
+    return {
+      socket
+    };
+  }
+
 
   function ticTacToe(size) {
 
@@ -35,22 +95,14 @@ $(function() {
     let grid = {};
     let canvas = {};
     let arrayElem = [];
-    let chancesElem = '';
-    let playingElem = '';
+    let chancesElem = $('#chances');
+    let playingElem = $('#playing');
     let playing = false;
     let rows = [];
     let columns = [];
     let d1 = 0;
     let d2 = 0;
     let numMoves = 0;
-
-    function getSize() {
-      return size;
-    }
-
-    function isPlaying() {
-      return playing;
-    }
 
     function setPlaying(isPlaying) {
       playing = isPlaying;
@@ -62,10 +114,6 @@ $(function() {
 
     function setTurn(setTurn) {
       turn = setTurn;
-    }
-
-    function getArrayElem() {
-      return arrayElem;
     }
 
     function setPlayingElem(data) {
@@ -90,14 +138,11 @@ $(function() {
       canvas.initializeCanvas(size);
       initializeMouseMove();
       //console.log(grid);
-      arrayElem = arrayMatrix(size, size, 0),
-      chancesElem = $('#chances');
-      playingElem = $('#playing');
-      //setPlaying(true);
+      arrayElem = arrayMatrix(size, size, 0);
       setTurn(turnEnum.CIRCLE);
       numMoves = 0;
       chancesElem.html('Chance: ' + getTurn());
-      //
+
       initializeArrays();
     }
 
@@ -106,8 +151,8 @@ $(function() {
       let rect = canvasElement.getBoundingClientRect();
 
       $('#wordCanvas').on('click', function(event) {
-        let x = event.pageX-rect.left;
-        let y = event.pageY-rect.top;
+        let x = event.pageX - rect.left;
+        let y = event.pageY - rect.top;
         //console.log(x + ', ' + y);
         handleMouseClick(x, y);
       });
@@ -116,27 +161,28 @@ $(function() {
     function handleMouseClick(x, y) {
       let xVal = 0;
       let yVal = 0;
-      for(let i=1;i<=size;i++) {
-        if(x >= grid['x' + (i)] && x < grid['x' + (i+1)]) {
+      for (let i = 1; i <= size; i++) {
+        if (x >= grid['x' + (i)] && x < grid['x' + (i + 1)]) {
           xVal = i;
           break;
         }
       }
 
-      for(let i=1;i<=size;i++) {
-        if(y >= grid['y' + (i)] && y < grid['y' + (i+1)]) {
+      for (let i = 1; i <= size; i++) {
+        if (y >= grid['y' + (i)] && y < grid['y' + (i + 1)]) {
           yVal = i;
           break;
         }
       }
-      if(xVal >=1 && yVal >=1 && playing) {
+      if (xVal >= 1 && yVal >= 1 && playing) {
         //console.log(yVal-1, xVal-1);
-        let validMove = playMove(yVal-1, xVal-1);
-        if(validMove) {
-          socket.emit('move', {
+        let validMove = playMove(yVal - 1, xVal - 1);
+        if (validMove) {
+          const roomNo = SOCKET_OBJ.roomNo;
+          SOCKET_OBJ.socket.emit('move', {
             roomNo,
-            xVal:yVal-1,
-            yVal:xVal-1
+            xVal: yVal - 1,
+            yVal: xVal - 1
           });
         }
       }
@@ -299,7 +345,7 @@ $(function() {
     };
   }
 
-  function arrayMatrix (numRows, numCols, initial) {
+  function arrayMatrix(numRows, numCols, initial) {
     var arr = [];
     for (var i = 0; i < numRows; ++i) {
       var columns = [];
