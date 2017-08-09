@@ -7,8 +7,8 @@ $(function() {
 
 
   function initializePage() {
-    if ($.cookie('username')) {
-      console.log('Welcome back ' + $.cookie('username'));
+    if (Cookies.get('username')) {
+      console.log('Welcome back ' + Cookies.get('username'));
       $('#initialDiv').hide();
       startGame();
     } else {
@@ -31,7 +31,7 @@ $(function() {
       PLAYER_NAME.indexOf('prashant') > -1) {
       $('#error').html('Please enter a decent name');
     } else {
-      $.cookie('username', PLAYER_NAME);
+      Cookies.set('username', PLAYER_NAME);
       $('#initialDiv').hide();
       $(document).unbind('keypress');
       startGame();
@@ -40,7 +40,7 @@ $(function() {
 
   function startGame() {
     SOCKET_OBJ.socket.emit('new player', {
-      playerName: $.cookie('username')
+      playerName: Cookies.get('username')
     });
     ticTacToeGame.initialize();
   }
@@ -53,9 +53,9 @@ $(function() {
     });
 
     socket.on('room', function(data) {
-      console.log('Joined room ' + data.roomNo + ' : ' + $.cookie('username'));
+      console.log('Joined room ' + data.roomNo + ' : ' + Cookies.get('username'));
       SOCKET_OBJ.roomNo = data.roomNo;
-      if ($.cookie('username') === data.player1) {
+      if (Cookies.get('username') === data.player1) {
         ticTacToeGame.otherPlayer = data.player2;
       } else {
         ticTacToeGame.otherPlayer = data.player1;
